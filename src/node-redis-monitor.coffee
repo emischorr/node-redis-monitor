@@ -23,7 +23,7 @@ exports.redisMonitor = class
       callback: @setHost
     ,
       name: /^(-p|--port)$/
-      expected: /^[0-9]$/
+      expected: /^([0-9]+)$/
       callback: @setPort
     ,
       name: /^(-a|--password)$/
@@ -31,7 +31,7 @@ exports.redisMonitor = class
       callback: @setPassword
     ,
       name: /^(-i|--interval)$/
-      expected: /^([0-9])$/
+      expected: /^([0-9]+)$/
       callback: @setInterval
     ], @run, @invalidArgument
   
