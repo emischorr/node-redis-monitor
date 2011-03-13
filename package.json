@@ -1,0 +1,23 @@
+{ "name" : "node-redis-monitor"
+, "description" : "Live redis server monitor"
+, "version" : "0.0.1"
+, "homepage" : "http://www.filshmedia.net"
+, "author" : "Sascha Gehlich <contact@filshmedia.net> (http://www.filshmedia.net)"
+, "repository" :
+  { "type" : "git"
+  , "url" : "http://github.com/saschagehlich/node-redis-monitor"
+  }
+, "bugs" :
+  { "mail" : "contact@filshmedia.net"
+  , "web" : "http://github.com/saschagehlich/node-redis-monitor/issues"
+  }
+, "bin" : { "redis-monitor" : "./index.js" }
+, "main" : "redis-monitor"
+, "engines" : { "node" : ">=0.4.0" }
+, "scripts" : {  }
+, "licenses" :
+  [ { "type" : "MIT"
+    , "url" : "http://github.com/isaacs/npm/raw/master/LICENSE"
+    }
+  ]
+}
