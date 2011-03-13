@@ -12,6 +12,7 @@ exports.redisMonitor = class
     @config = 
       host: "localhost"
       port: 6379
+      interval: 1
     arg.parse [
       name: /^(--help|-\?)$/
       expected: null
@@ -28,6 +29,10 @@ exports.redisMonitor = class
       name: /^(-a|--password)$/
       expected: /^(.*)$/
       callback: @setPassword
+    ,
+      name: /^(-i|--interval)$/
+      expected: /^([0-9])$/
+      callback: @setInterval
     ], @run, @invalidArgument
   
   # CLI Handling
@@ -37,9 +42,11 @@ exports.redisMonitor = class
     console.log "   -h, --host [HOSTNAME]       Set the hostname to connect to"
     console.log "   -p, --port [PORT]           Set the port to connect to"
     console.log "   -a, --password [PASSWORD]   Set the password to authenticate with"
+    console.log "   -i, --interval [INTERVAL]   Set the refresh interval in seconds"
   setHost: (end, host) => @config.host = host; end()
   setPort: (end, port) => @config.port = port; end()
   setPassword: (end, password) => @config.password = password; end()
+  setInterval: (end, interval) => @config.interval = interval; end()
   invalidArgument: (arg, valueMissing) => logger.error "The argument #{arg} #{if valueMissing is true then 'expects a value' else 'is not valid'}"
   
   run: =>
@@ -48,7 +55,7 @@ exports.redisMonitor = class
       requests: {}
     @updateInterval = setInterval(=>
       @updateDisplay()
-    , 1000)
+    , @config.interval*1000)
     
     @command = [
       'redis-cli'
@@ -87,7 +94,10 @@ exports.redisMonitor = class
     sys.print "\033[2J"
     sys.print "\r\033[40;1;37m node-redis-monitor \033[m\r\n\r\n"
     
-    sys.print "Requests per second:\t#{@stat.total}\r\n\r\n"
+    if @config.interval is 1
+      sys.print "Requests per second:\t#{@stat.total}\r\n\r\n"
+    else
+      sys.print "Requests per second:\t#{Math.floor(@stat.total/@config.interval)} (#{@stat.total} in last #{@config.interval} seconds)\r\n\r\n"
     
     # order keys by requests
     keys = []
@@ -101,9 +111,10 @@ exports.redisMonitor = class
       requests[key[0]] = key[1]
     
     for key, val of requests
-      space_a = new Array(20-key.length).join(" ")
-      space_b = new Array(20-val.toString().length).join(" ")
-      sys.print "#{key}:#{space_a}#{val}#{space_b}#{(100/@stat.total*val).toFixed(2)}%\r\n"
+      if key.length
+        space_a = new Array(20-key.length).join(" ")
+        space_b = new Array(20-val.toString().length).join(" ")
+        sys.print "#{key}:#{space_a}#{val}#{space_b}#{(100/@stat.total*val).toFixed(2)}%\r\n"
       
     delete requests
     

@@ -29,6 +29,7 @@ Instructions
       -h, --host [HOSTNAME]       Set the hostname to connect to
       -p, --port [PORT]           Set the port to connect to
       -a, --password [PASSWORD]   Set the password to authenticate with
+      -i, --interval [INTERVAL]   Set the refresh interval in seconds
 
 License
 =======
